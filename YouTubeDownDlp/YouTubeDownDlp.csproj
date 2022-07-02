@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Authors>KoseNX</Authors>
+    <Copyright>KoseNX</Copyright>
+    <SignAssembly>False</SignAssembly>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.WindowsAPICodePack-Shell" Version="1.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Settings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="del &quot;$(TargetDir)*.xml&quot;&#xD;&#xA;del &quot;$(TargetDir)*.pdb&quot;&#xD;&#xA;rd /s /q &quot;$(TargetDir)de&quot;&#xD;&#xA;rd /s /q &quot;$(TargetDir)en&quot;&#xD;&#xA;rd /s /q &quot;$(TargetDir)es&quot;&#xD;&#xA;rd /s /q &quot;$(TargetDir)fr&quot;&#xD;&#xA;rd /s /q &quot;$(TargetDir)hu&quot;&#xD;&#xA;rd /s /q &quot;$(TargetDir)it&quot;&#xD;&#xA;rd /s /q &quot;$(TargetDir)ko&quot;&#xD;&#xA;rd /s /q &quot;$(TargetDir)pt-BR&quot;&#xD;&#xA;rd /s /q &quot;$(TargetDir)ro&quot;&#xD;&#xA;rd /s /q &quot;$(TargetDir)ru&quot;&#xD;&#xA;rd /s /q &quot;$(TargetDir)sv&quot;&#xD;&#xA;rd /s /q &quot;$(TargetDir)zh-Hans&quot;&#xD;&#xA;rd /s /q &quot;$(TargetDir)zh-Hant&quot;" />
+  </Target>
+
+</Project>

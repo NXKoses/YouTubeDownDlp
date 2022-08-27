@@ -1,4 +1,6 @@
 ﻿using System.Diagnostics;
+using YouTubeDownDlp.Components.ArgComponents;
+using YouTubeDownDlp.Forms;
 
 namespace YouTubeDownDlp.Components
 {
@@ -7,110 +9,111 @@ namespace YouTubeDownDlp.Components
         public static string? Url { get; private set; }
         public static string? Outputpath { get; private set; }
 
-        public static async Task RunConvertTask(Form form, RichTextBox logtextbox, Mode mode, string outputpath, string url)
+        /// <summary>
+        /// ダウンロードを実行します
+        /// </summary>
+        /// <param name="form">Invokeを使うためのForm</param>
+        /// <param name="logtextbox">Logを出すRichTextBox</param>
+        /// <param name="mode"></param>
+        /// <param name="outputpath"></param>
+        /// <param name="url"></param>
+        /// <returns></returns>
+        public static async Task RunConvertTask(Form form, RichTextBox logtextbox, ArgData argdata)
         {
             Debug.WriteLine("--RunConvert--");
-            Url = url;
-            Outputpath = outputpath;
+            Url = argdata.Url;
+            Outputpath = argdata.OutputPath;
 
             await Task.Run(() =>
             {
-                using (Process proc = new())
+                using Process proc = new();
+                proc.StartInfo.FileName = "cmd.exe";
+                proc.StartInfo.Arguments = @"/c " + GetArg.GetArgs(argdata);
+                proc.StartInfo.WorkingDirectory = MainFormHelpers.AppPath + "/System/";
+                proc.StartInfo.CreateNoWindow = true;
+                proc.StartInfo.UseShellExecute = false;
+                proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                proc.StartInfo.RedirectStandardOutput = true;
+                proc.StartInfo.RedirectStandardError = true;
+
+                _ = proc.Start();
+
+                //ログ
+                for (; ; )
                 {
-                    proc.StartInfo.FileName = "cmd.exe";
-                    proc.StartInfo.Arguments = @GetArg(mode);
-                    proc.StartInfo.WorkingDirectory = MainForm.AppPath + "/System/";
-                    proc.StartInfo.CreateNoWindow = true;
-                    proc.StartInfo.UseShellExecute = false;
-                    proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                    proc.StartInfo.RedirectStandardOutput = true;
-                    proc.StartInfo.RedirectStandardError = true;
+                    string line = proc.StandardOutput.ReadLine();
 
-                    proc.Start();
-
-                    //ログ
-                    for (; ; )
+                    if (line == null)
                     {
-                        string line = proc.StandardOutput.ReadLine();
-
-                        if (line == null)
-                        {
-                            break;
-                        }
-
-                        //Invokeメソッドを使用
-                        if (form.InvokeRequired)
-                        {
-                            form.Invoke(new Action(() =>
-                            {
-                                logtextbox.AppendText(line + "\r\n");
-                            }));
-                        }
-                        else
-                        {
-                            logtextbox.AppendText(line + "\r\n");
-                        }
-
-                        Debug.WriteLine(line + " :log");
+                        break;
                     }
 
-                    //エラーログ
-                    string errorln = proc.StandardError.ReadToEnd();
-                    if (!errorln.Equals(""))
+                    //Invokeメソッドを使用
+                    if (form.InvokeRequired)
                     {
-                        if (form.InvokeRequired)
+                        form.Invoke(new Action(() =>
                         {
-                            form.Invoke(new Action(() =>
-                            {
-                                logtextbox.SelectionColor = Color.Red;
-                                logtextbox.AppendText(errorln + "\r\n");
-                                logtextbox.SelectionColor = Color.Black;
-                            }));
-                        }
-                        else
+                            logtextbox.AppendText(line + "\r\n");
+                        }));
+                    }
+                    else
+                    {
+                        logtextbox.AppendText(line + "\r\n");
+                    }
+
+                    Debug.WriteLine(line + " :log");
+
+                }
+
+                //エラーログ
+                string errorln = proc.StandardError.ReadToEnd();
+                if (!errorln.Equals("", StringComparison.Ordinal))
+                {
+                    if (form.InvokeRequired)
+                    {
+                        form.Invoke(new Action(() =>
                         {
                             logtextbox.SelectionColor = Color.Red;
                             logtextbox.AppendText(errorln + "\r\n");
                             logtextbox.SelectionColor = Color.Black;
-                        }
+                        }));
                     }
-
-                    proc.Close();
-                    proc.Dispose();
+                    else
+                    {
+                        logtextbox.SelectionColor = Color.Red;
+                        logtextbox.AppendText(errorln + "\r\n");
+                        logtextbox.SelectionColor = Color.Black;
+                    }
                 }
+
+                proc.Close();
+                proc.Dispose();
             });
             Debug.WriteLine("--Complete--");
         }
 
-        /// <summary>
-        /// Modeにおおじて必要な引数を取得します
-        /// </summary>
-        /// <param name="mode"></param>
-        /// <returns>コマンド(Arg)</returns>
-        private static string GetArg(Mode mode)
+        public static void RunPopupConvert(ArgData argdata)
         {
-            switch (mode)
-            {
-                case Mode.MP4:
-                    return "/c yt-dlp -f bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best " + " --yes-playlist " + Url + " -P " + Outputpath;
+            Debug.WriteLine("--RunPopupConvert--");
+            Url = argdata.Url;
+            Outputpath = argdata.OutputPath;
 
-                case Mode.MP3:
-                    return "/c yt-dlp -x --audio-format mp3 --yes-playlist " + Url + " -P " + Outputpath;
+            using Process proc = new();
+            proc.StartInfo.FileName = "cmd.exe";
+            proc.StartInfo.Arguments = @"/c " + GetArg.GetArgs(argdata);
+            proc.StartInfo.WorkingDirectory = MainFormHelpers.AppPath + "/System/";
+            proc.StartInfo.CreateNoWindow = false;
+            proc.StartInfo.UseShellExecute = false;
+            proc.StartInfo.WindowStyle = ProcessWindowStyle.Normal;
+            proc.StartInfo.RedirectStandardOutput = false;
+            proc.StartInfo.RedirectStandardError = false;
 
-                case Mode.WAV:
-                    return "/c yt-dlp -x --audio-format wav --yes-playlist " + Url + " -P " + Outputpath;
+            _ = proc.Start();
 
-                default:
-                    return "/c yt-dlp -x --audio-format mp3 --yes-playlist " + Url + " -P " + Outputpath;
-            }
-        }
+            proc.Close();
+            proc.Dispose();
 
-        public enum Mode
-        {
-            MP3,
-            MP4,
-            WAV
+            Debug.WriteLine("--Complete--");
         }
     }
-
 }

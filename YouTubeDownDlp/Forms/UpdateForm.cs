@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using YouTubeDownDlp.Forms;
 
 namespace YouTubeDownDlp
 {
@@ -7,7 +8,7 @@ namespace YouTubeDownDlp
         public UpdateForm()
         {
             InitializeComponent();
-            this.ControlBox = false;
+            ControlBox = false;
             close_button.Enabled = false;
 
             StartUpdate();
@@ -16,7 +17,7 @@ namespace YouTubeDownDlp
         public async void StartUpdate()
         {
             await UpdateTask();
-            MessageBox.Show("更新処理が終了しました ログをご確認ください", "お知らせぇ", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            _ = MessageBox.Show("更新処理が終了しました ログをご確認ください", "お知らせぇ", MessageBoxButtons.OK, MessageBoxIcon.Information);
             close_button.Enabled = true;
         }
 
@@ -25,75 +26,73 @@ namespace YouTubeDownDlp
             Debug.WriteLine("--UpdateTask--");
             await Task.Run(() =>
             {
-                using (Process proc = new())
+                using Process proc = new();
+                proc.StartInfo.FileName = "cmd.exe";
+                proc.StartInfo.Arguments = @"/c yt-dlp -U";
+                proc.StartInfo.WorkingDirectory = MainFormHelpers.AppPath + "/System/";
+                proc.StartInfo.CreateNoWindow = true;
+                proc.StartInfo.UseShellExecute = false;
+                proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                proc.StartInfo.RedirectStandardOutput = true;
+                proc.StartInfo.RedirectStandardError = true;
+                _ = proc.Start();
+
+                //ログ
+                for (; ; )
                 {
-                    proc.StartInfo.FileName = "cmd.exe";
-                    proc.StartInfo.Arguments = @"/c yt-dlp -U";
-                    proc.StartInfo.WorkingDirectory = MainForm.AppPath + "/System/";
-                    proc.StartInfo.CreateNoWindow = true;
-                    proc.StartInfo.UseShellExecute = false;
-                    proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                    proc.StartInfo.RedirectStandardOutput = true;
-                    proc.StartInfo.RedirectStandardError = true;
-                    proc.Start();
+                    string line = proc.StandardOutput.ReadLine();
 
-                    //ログ
-                    for (; ; )
+                    if (line == null)
                     {
-                        string line = proc.StandardOutput.ReadLine();
-
-                        if (line == null)
-                        {
-                            break;
-                        }
-
-                        //Invokeメソッドを使用
-                        if (this.InvokeRequired)
-                        {
-                            this.Invoke(new Action(() =>
-                            {
-                                updatelog_richTextBox.AppendText(line + "\r\n");
-                            }));
-                        }
-                        else
-                        {
-                            updatelog_richTextBox.AppendText(line + "\r\n");
-                        }
-
-                        Debug.WriteLine(line + " :log");
+                        break;
                     }
 
-                    //エラーログ
-                    string errorln = proc.StandardError.ReadToEnd();
-                    if (!errorln.Equals(""))
+                    //Invokeメソッドを使用
+                    if (InvokeRequired)
                     {
-                        if (this.InvokeRequired)
+                        Invoke(new Action(() =>
                         {
-                            this.Invoke(new Action(() =>
-                            {
-                                updatelog_richTextBox.SelectionColor = Color.Red;
-                                updatelog_richTextBox.AppendText(errorln + "\r\n");
-                                updatelog_richTextBox.SelectionColor = Color.Black;
-                            }));
-                        }
-                        else
+                            updatelog_richTextBox.AppendText(line + "\r\n");
+                        }));
+                    }
+                    else
+                    {
+                        updatelog_richTextBox.AppendText(line + "\r\n");
+                    }
+
+                    Debug.WriteLine(line + " :log");
+                }
+
+                //エラーログ
+                string errorln = proc.StandardError.ReadToEnd();
+                if (!errorln.Equals("", StringComparison.Ordinal))
+                {
+                    if (InvokeRequired)
+                    {
+                        Invoke(new Action(() =>
                         {
                             updatelog_richTextBox.SelectionColor = Color.Red;
                             updatelog_richTextBox.AppendText(errorln + "\r\n");
                             updatelog_richTextBox.SelectionColor = Color.Black;
-                        }
+                        }));
                     }
-
-                    proc.Close();
-                    proc.Dispose();
+                    else
+                    {
+                        updatelog_richTextBox.SelectionColor = Color.Red;
+                        updatelog_richTextBox.AppendText(errorln + "\r\n");
+                        updatelog_richTextBox.SelectionColor = Color.Black;
+                    }
                 }
+
+                proc.Close();
+                proc.Dispose();
             });
             Debug.WriteLine("--Complete--");
         }
 
         private void close_button_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
     }
 }

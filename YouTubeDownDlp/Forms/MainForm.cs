@@ -1,25 +1,26 @@
+using YouTubeDownDlp.Components;
+using YouTubeDownDlp.Components.ArgComponents;
+using YouTubeDownDlp.Forms;
+
 namespace YouTubeDownDlp
 {
     public partial class MainForm : Form
     {
-        private static string? Outputfolderpath;
-        private static string? url;
-
-        private static bool IsConverting = false;
-        public static string? AppPath;
-
         public MainForm()
         {
             InitializeComponent();
             Url_textBox.Select();
             Log_richTextBox.HideSelection = false;
-            AppPath = Components.Components.GetAppPath();
+            IsFormTheStartLivedown_checkBox.Visible = false;
+            CookieUseBrowser_comboBox.Visible = false;
+            CookieUseBrowser_comboBox.SelectedIndex = 0;
+            MainFormHelpers.AppPath = Components.Components.GetAppPath();
 
             //もし出力先が保存されてたらそれを代入する
             if (Properties.Settings.Default.OutputFolderPath.Length != 0)
             {
-                Outputfolderpath = Properties.Settings.Default.OutputFolderPath;
-                OutputFolder_textBox.Text = Outputfolderpath;
+                MainFormHelpers.Outputfolderpath = Properties.Settings.Default.OutputFolderPath;
+                OutputFolder_textBox.Text = MainFormHelpers.Outputfolderpath;
             }
         }
 
@@ -30,67 +31,87 @@ namespace YouTubeDownDlp
         /// <param name="e"></param>
         private async void ConvertRun_button_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(Outputfolderpath))
+            if (string.IsNullOrEmpty(MainFormHelpers.Outputfolderpath))
             {
-                MessageBox.Show("フォルダを選択してください", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                _ = MessageBox.Show("フォルダを選択してください", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
             if (string.IsNullOrEmpty(Url_textBox.Text))
             {
-                MessageBox.Show("URLを入力してください", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                _ = MessageBox.Show("URLを入力してください", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            //argを生成するためのデータをまとめる　それを実行時に受け渡す
+            ArgData argdata = new()
+            {
+                CookieBrowserName = CookieUseBrowser_comboBox.Text,
+                IsCookie = IsUseCookie_checkBox.Checked,
+                IsformStartLive = IsFormTheStartLivedown_checkBox.Checked,
+                mode = GetMode(),
+                OutputPath = MainFormHelpers.Outputfolderpath,
+                Url = Url_textBox.Text
+            };
+
+            if (IsLive_checkBox.Checked)
+            {
+                DialogResult isok = MessageBox.Show("生放送ダウンロード機能が有効です。録画を停止する際はコマンドプロンプトを選択した状態で<Ctrl + C>で終了できます。" +
+                    "本当に実行しますか？", "質問", MessageBoxButtons.YesNo, MessageBoxIcon.Information, MessageBoxDefaultButton.Button2);
+                if (isok == DialogResult.No)
+                {
+                    return;
+                }
+
+                Converts.RunPopupConvert(argdata);
+
+                Url_textBox.Text = "";
                 return;
             }
 
             Log_richTextBox.Text = "";
-            url = Url_textBox.Text;
             main_Control.SelectedTab = logPage;
-            IsConverting = true;
+            MainFormHelpers.IsConverting = true;
 
-            //待機
-            await Components.Converts.RunConvertTask(this, Log_richTextBox, GetMode(), Outputfolderpath, url);
+            //変換実行
+            await Converts.RunConvertTask(this, Log_richTextBox, argdata);
 
-            IsConverting = false;
+            MainFormHelpers.IsConverting = false;
             Url_textBox.Text = "";
-            MessageBox.Show("処理が終了しました", "お知らせぇ！", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            _ = MessageBox.Show("処理が終了しました", "お知らせぇ！", MessageBoxButtons.OK, MessageBoxIcon.Information);
             main_Control.SelectedTab = MainPage;
         }
 
-        private Components.Converts.Mode GetMode()
+        private ArgData.Mode GetMode()
         {
             if (mp3_radioButton.Checked)
             {
-                return Components.Converts.Mode.MP3;
+                return ArgData.Mode.MP3;
             }
 
             if (mp4_radioButton.Checked)
             {
-                return Components.Converts.Mode.MP4;
+                return ArgData.Mode.MP4;
             }
 
-            if (wav_radioButton.Checked)
-            {
-                return Components.Converts.Mode.WAV;
-            }
-
-            return Components.Converts.Mode.MP3;
+            return wav_radioButton.Checked ? ArgData.Mode.WAV : ArgData.Mode.MP3;
         }
 
         private void OutputFolderSelect_button_Click(object sender, EventArgs e)
         {
-            string path = Components.FolderBrowserComponents.FolderSelect();
-            if (path.Equals("none"))
+            string path = FolderBrowserComponents.FolderSelect();
+            if (path.Equals("none", StringComparison.Ordinal))
             {
                 return;
             }
-            Outputfolderpath = path;
+
+            MainFormHelpers.Outputfolderpath = path;
             OutputFolder_textBox.Text = path;
-            path = null;
         }
 
         private void main_Control_Selecting(object sender, TabControlCancelEventArgs e)
         {
-            if (IsConverting)
+            if (MainFormHelpers.IsConverting)
             {
                 e.Cancel = true;
             }
@@ -98,22 +119,66 @@ namespace YouTubeDownDlp
 
         private void dlpUpdate_toolStripButton_Click(object sender, EventArgs e)
         {
-            using var updateform = new UpdateForm();
-            updateform.ShowDialog();
+            using UpdateForm updateform = new();
+            _ = updateform.ShowDialog();
             updateform.Dispose();
         }
 
         private void outputpathsave_button_Click(object sender, EventArgs e)
         {
-            Properties.Settings.Default.OutputFolderPath = Outputfolderpath;
+            Properties.Settings.Default.OutputFolderPath = MainFormHelpers.Outputfolderpath;
             Properties.Settings.Default.Save();
-            MessageBox.Show("保存しました", "お知らせぇ！", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            _ = MessageBox.Show("保存しました", "お知らせぇ！", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void outputpathReset_button_Click(object sender, EventArgs e)
         {
             Properties.Settings.Default.Reset();
-            MessageBox.Show("リセットしました。次回起動時から適用されます", "お知らせぇ！", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            _ = MessageBox.Show("リセットしました。次回起動時から適用されます", "お知らせぇ！", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void IsFormTheStartLivedown_checkBox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!IsLive_checkBox.Checked)
+            {
+                IsFormTheStartLivedown_checkBox.Checked = false;
+            }
+        }
+
+        /// <summary>
+        /// 生放送をダウンロードするにチェックが入っていないと"初めからダウンロード"を表示しないようにする
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void IsLive_checkBox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (IsLive_checkBox.Checked)
+            {
+                IsFormTheStartLivedown_checkBox.Visible = true;
+            }
+            else
+            {
+                IsFormTheStartLivedown_checkBox.Visible = false;
+                IsFormTheStartLivedown_checkBox.Checked = false;
+            }
+        }
+
+        /// <summary>
+        /// クッキーを使うにチェックが入っていないとコンボボックスを表示しないようにする
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void IsUseCookie_checkBox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (IsUseCookie_checkBox.Checked)
+            {
+                CookieUseBrowser_comboBox.Visible = true;
+            }
+            else
+            {
+                CookieUseBrowser_comboBox.SelectedIndex = 0;
+                CookieUseBrowser_comboBox.Visible = false;
+            }
         }
     }
 }

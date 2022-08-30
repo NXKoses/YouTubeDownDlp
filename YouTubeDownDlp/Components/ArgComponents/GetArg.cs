@@ -3,7 +3,7 @@
     internal class GetArg
     {
         /// <summary>
-        /// Modeにおおじて必要な引数を取得します
+        /// Argdataから必要なコマンドを返します
         /// </summary>
         /// <returns>コマンド(Arg)</returns>
         public static string GetArgs(ArgData argdata)

@@ -1,6 +1,5 @@
 using YouTubeDownDlp.Components;
 using YouTubeDownDlp.Components.ArgComponents;
-using YouTubeDownDlp.Forms;
 
 namespace YouTubeDownDlp
 {
@@ -14,13 +13,13 @@ namespace YouTubeDownDlp
             IsFormTheStartLivedown_checkBox.Visible = false;
             CookieUseBrowser_comboBox.Visible = false;
             CookieUseBrowser_comboBox.SelectedIndex = 0;
-            MainFormHelpers.AppPath = Components.Components.GetAppPath();
+            Global_Variable.AppPath = Components.Components.GetAppPath();
 
             //もし出力先が保存されてたらそれを代入する
             if (Properties.Settings.Default.OutputFolderPath.Length != 0)
             {
-                MainFormHelpers.Outputfolderpath = Properties.Settings.Default.OutputFolderPath;
-                OutputFolder_textBox.Text = MainFormHelpers.Outputfolderpath;
+                Global_Variable.Outputfolderpath = Properties.Settings.Default.OutputFolderPath;
+                OutputFolder_textBox.Text = Global_Variable.Outputfolderpath;
             }
         }
 
@@ -31,7 +30,7 @@ namespace YouTubeDownDlp
         /// <param name="e"></param>
         private async void ConvertRun_button_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(MainFormHelpers.Outputfolderpath))
+            if (string.IsNullOrEmpty(Global_Variable.Outputfolderpath))
             {
                 _ = MessageBox.Show("フォルダを選択してください", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
@@ -43,14 +42,14 @@ namespace YouTubeDownDlp
                 return;
             }
 
-            //argを生成するためのデータをまとめる　それを実行時に受け渡す
+            //コマンドを生成するためのデータをまとめる　それを実行時に受け渡す
             ArgData argdata = new()
             {
                 CookieBrowserName = CookieUseBrowser_comboBox.Text,
                 IsCookie = IsUseCookie_checkBox.Checked,
                 IsformStartLive = IsFormTheStartLivedown_checkBox.Checked,
                 mode = GetMode(),
-                OutputPath = MainFormHelpers.Outputfolderpath,
+                OutputPath = Global_Variable.Outputfolderpath,
                 Url = Url_textBox.Text
             };
 
@@ -71,12 +70,12 @@ namespace YouTubeDownDlp
 
             Log_richTextBox.Text = "";
             main_Control.SelectedTab = logPage;
-            MainFormHelpers.IsConverting = true;
+            Global_Variable.IsConverting = true;
 
             //変換実行
             await Converts.RunConvertTask(this, Log_richTextBox, argdata);
 
-            MainFormHelpers.IsConverting = false;
+            Global_Variable.IsConverting = false;
             Url_textBox.Text = "";
             _ = MessageBox.Show("処理が終了しました", "お知らせぇ！", MessageBoxButtons.OK, MessageBoxIcon.Information);
             main_Control.SelectedTab = MainPage;
@@ -105,13 +104,13 @@ namespace YouTubeDownDlp
                 return;
             }
 
-            MainFormHelpers.Outputfolderpath = path;
+            Global_Variable.Outputfolderpath = path;
             OutputFolder_textBox.Text = path;
         }
 
         private void main_Control_Selecting(object sender, TabControlCancelEventArgs e)
         {
-            if (MainFormHelpers.IsConverting)
+            if (Global_Variable.IsConverting)
             {
                 e.Cancel = true;
             }
@@ -126,7 +125,7 @@ namespace YouTubeDownDlp
 
         private void outputpathsave_button_Click(object sender, EventArgs e)
         {
-            Properties.Settings.Default.OutputFolderPath = MainFormHelpers.Outputfolderpath;
+            Properties.Settings.Default.OutputFolderPath = Global_Variable.Outputfolderpath;
             Properties.Settings.Default.Save();
             _ = MessageBox.Show("保存しました", "お知らせぇ！", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }

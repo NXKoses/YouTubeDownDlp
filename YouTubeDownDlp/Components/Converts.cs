@@ -1,13 +1,12 @@
 ﻿using System.Diagnostics;
 using YouTubeDownDlp.Components.ArgComponents;
-using YouTubeDownDlp.Forms;
 
 namespace YouTubeDownDlp.Components
 {
     internal class Converts
     {
-        public static string? Url { get; private set; }
-        public static string? Outputpath { get; private set; }
+        private static string? Url { get; set; }
+        private static string? Outputpath { get; set; }
 
         /// <summary>
         /// ダウンロードを実行します
@@ -29,7 +28,7 @@ namespace YouTubeDownDlp.Components
                 using Process proc = new();
                 proc.StartInfo.FileName = "cmd.exe";
                 proc.StartInfo.Arguments = @"/c " + GetArg.GetArgs(argdata);
-                proc.StartInfo.WorkingDirectory = MainFormHelpers.AppPath + "/System/";
+                proc.StartInfo.WorkingDirectory = Global_Variable.AppPath + "/System/";
                 proc.StartInfo.CreateNoWindow = true;
                 proc.StartInfo.UseShellExecute = false;
                 proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
@@ -101,7 +100,7 @@ namespace YouTubeDownDlp.Components
             using Process proc = new();
             proc.StartInfo.FileName = "cmd.exe";
             proc.StartInfo.Arguments = @"/c " + GetArg.GetArgs(argdata);
-            proc.StartInfo.WorkingDirectory = MainFormHelpers.AppPath + "/System/";
+            proc.StartInfo.WorkingDirectory = Global_Variable.AppPath + "/System/";
             proc.StartInfo.CreateNoWindow = false;
             proc.StartInfo.UseShellExecute = false;
             proc.StartInfo.WindowStyle = ProcessWindowStyle.Normal;

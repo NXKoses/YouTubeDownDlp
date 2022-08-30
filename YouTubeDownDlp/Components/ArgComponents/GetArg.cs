@@ -27,10 +27,10 @@
 
             return argdata.mode switch
             {
-                ArgData.Mode.MP4 => $"yt-dlp -f bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best --yes-playlist {live} {cookie} {url} -P {outputpath}",
-                ArgData.Mode.MP3 => $"yt-dlp -x --audio-format mp3 --yes-playlist {live} {cookie} {url} -P {outputpath}",
-                ArgData.Mode.WAV => $"yt-dlp -x --audio-format wav --yes-playlist {live} {cookie} {url} -P {outputpath}",
-                _ => $"yt-dlp -x --audio-format mp3 --yes-playlist {live} {cookie} {url} -P {outputpath}",
+                ArgData.Mode.MP4 => $"yt-dlp -N 6 -f bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best --yes-playlist {live} {cookie} {url} -P {outputpath}",
+                ArgData.Mode.MP3 => $"yt-dlp -N 6 -x --audio-format mp3 --yes-playlist {live} {cookie} {url} -P {outputpath}",
+                ArgData.Mode.WAV => $"yt-dlp -N 6 -x --audio-format wav --yes-playlist {live} {cookie} {url} -P {outputpath}",
+                _ => $"yt-dlp -N 6 -x --audio-format mp3 --yes-playlist {live} {cookie} {url} -P {outputpath}",
             };
         }
 

@@ -3,7 +3,7 @@
     internal class GetArg
     {
         /// <summary>
-        /// Argdataから必要なコマンドを返します
+        /// ArgDataから必要なコマンドを返します
         /// </summary>
         /// <returns>コマンド(Arg)</returns>
         public static string GetArgs(ArgData argdata)
@@ -27,10 +27,10 @@
 
             return argdata.mode switch
             {
-                ArgData.Mode.MP4 => $"yt-dlp -N 6 -f bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best --yes-playlist {live} {cookie} {url} -P {outputpath}",
-                ArgData.Mode.MP3 => $"yt-dlp -N 6 -x --audio-format mp3 --yes-playlist {live} {cookie} {url} -P {outputpath}",
-                ArgData.Mode.WAV => $"yt-dlp -N 6 -x --audio-format wav --yes-playlist {live} {cookie} {url} -P {outputpath}",
-                _ => $"yt-dlp -N 6 -x --audio-format mp3 --yes-playlist {live} {cookie} {url} -P {outputpath}",
+                Mode.MP4 => $"yt-dlp -N 6 -f bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best --yes-playlist {url} -P {outputpath} {live} {cookie}",
+                Mode.MP3 => $"yt-dlp -N 6 -x --audio-format mp3 --yes-playlist {url} -P {outputpath} {live} {cookie}",
+                Mode.WAV => $"yt-dlp -N 6 -x --audio-format wav --yes-playlist {url} -P {outputpath} {live} {cookie}",
+                _ => $"yt-dlp -N 6 -x --audio-format mp3 --yes-playlist {url} -P {outputpath} {live} {cookie}",
             };
         }
 

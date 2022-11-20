@@ -5,23 +5,17 @@ namespace YouTubeDownDlp.Components
 {
     internal class Converts
     {
-        private static string? Url { get; set; }
-        private static string? Outputpath { get; set; }
-
         /// <summary>
         /// ダウンロードを実行します
         /// </summary>
-        /// <param name="form">Invokeを使うためのForm</param>
-        /// <param name="logtextbox">Logを出すRichTextBox</param>
-        /// <param name="mode"></param>
-        /// <param name="outputpath"></param>
-        /// <param name="url"></param>
+        /// <param name="form">Invokeを使うためのFormを指定</param>
+        /// <param name="logtextbox">Logを出すRichTextBoxを指定</param>
+        /// <param name="argdata">コマンドを生成するための情報</param>
         /// <returns></returns>
         public static async Task RunConvertTask(Form form, RichTextBox logtextbox, ArgData argdata)
         {
+            Debug.WriteLine(GetArg.GetArgs(argdata));
             Debug.WriteLine("--RunConvert--");
-            Url = argdata.Url;
-            Outputpath = argdata.OutputPath;
 
             await Task.Run(() =>
             {
@@ -35,7 +29,7 @@ namespace YouTubeDownDlp.Components
                 proc.StartInfo.RedirectStandardOutput = true;
                 proc.StartInfo.RedirectStandardError = true;
 
-                _ = proc.Start();
+                proc.Start();
 
                 //ログ
                 for (; ; )
@@ -94,8 +88,6 @@ namespace YouTubeDownDlp.Components
         public static void RunPopupConvert(ArgData argdata)
         {
             Debug.WriteLine("--RunPopupConvert--");
-            Url = argdata.Url;
-            Outputpath = argdata.OutputPath;
 
             using Process proc = new();
             proc.StartInfo.FileName = "cmd.exe";
@@ -107,7 +99,7 @@ namespace YouTubeDownDlp.Components
             proc.StartInfo.RedirectStandardOutput = false;
             proc.StartInfo.RedirectStandardError = false;
 
-            _ = proc.Start();
+            proc.Start();
 
             proc.Close();
             proc.Dispose();

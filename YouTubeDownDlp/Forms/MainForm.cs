@@ -7,13 +7,17 @@ namespace YouTubeDownDlp
     {
         public MainForm()
         {
+            Global_Variable.AppPath = Components.Components.GetAppPath();
+            Components.Components.SystemFileCheck();
+
             InitializeComponent();
+
+
             Url_textBox.Select();
             Log_richTextBox.HideSelection = false;
             IsFormTheStartLivedown_checkBox.Visible = false;
             CookieUseBrowser_comboBox.Visible = false;
             CookieUseBrowser_comboBox.SelectedIndex = 0;
-            Global_Variable.AppPath = Components.Components.GetAppPath();
 
             //もし出力先が保存されてたらそれを代入する
             if (Properties.Settings.Default.OutputFolderPath.Length != 0)
@@ -32,13 +36,13 @@ namespace YouTubeDownDlp
         {
             if (string.IsNullOrEmpty(Global_Variable.Outputfolderpath))
             {
-                _ = MessageBox.Show("フォルダを選択してください", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("フォルダを選択してください", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
             if (string.IsNullOrEmpty(Url_textBox.Text))
             {
-                _ = MessageBox.Show("URLを入力してください", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("URLを入力してください", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -53,6 +57,7 @@ namespace YouTubeDownDlp
                 Url = Url_textBox.Text
             };
 
+            //生放送ダウンロード実行時
             if (IsLive_checkBox.Checked)
             {
                 DialogResult isok = MessageBox.Show("生放送ダウンロード機能が有効です。録画を停止する際はコマンドプロンプトを選択した状態で<Ctrl + C>で終了できます。" +
@@ -77,23 +82,23 @@ namespace YouTubeDownDlp
 
             Global_Variable.IsConverting = false;
             Url_textBox.Text = "";
-            _ = MessageBox.Show("処理が終了しました", "お知らせぇ！", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show("処理が終了しました", "お知らせぇ！", MessageBoxButtons.OK, MessageBoxIcon.Information);
             main_Control.SelectedTab = MainPage;
         }
 
-        private ArgData.Mode GetMode()
+        private Mode GetMode()
         {
             if (mp3_radioButton.Checked)
             {
-                return ArgData.Mode.MP3;
+                return Mode.MP3;
             }
 
             if (mp4_radioButton.Checked)
             {
-                return ArgData.Mode.MP4;
+                return Mode.MP4;
             }
 
-            return wav_radioButton.Checked ? ArgData.Mode.WAV : ArgData.Mode.MP3;
+            return wav_radioButton.Checked ? Mode.WAV : Mode.MP3;
         }
 
         private void OutputFolderSelect_button_Click(object sender, EventArgs e)
@@ -119,7 +124,7 @@ namespace YouTubeDownDlp
         private void dlpUpdate_toolStripButton_Click(object sender, EventArgs e)
         {
             using UpdateForm updateform = new();
-            _ = updateform.ShowDialog();
+            updateform.ShowDialog();
             updateform.Dispose();
         }
 
@@ -127,13 +132,13 @@ namespace YouTubeDownDlp
         {
             Properties.Settings.Default.OutputFolderPath = Global_Variable.Outputfolderpath;
             Properties.Settings.Default.Save();
-            _ = MessageBox.Show("保存しました", "お知らせぇ！", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show("保存しました", "お知らせぇ！", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void outputpathReset_button_Click(object sender, EventArgs e)
         {
             Properties.Settings.Default.Reset();
-            _ = MessageBox.Show("リセットしました。次回起動時から適用されます", "お知らせぇ！", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show("リセットしました。次回起動時から適用されます", "お知らせぇ！", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void IsFormTheStartLivedown_checkBox_CheckedChanged(object sender, EventArgs e)

@@ -8,7 +8,7 @@ namespace YouTubeDownDlp
         public MainForm()
         {
             Global_Variable.AppPath = Components.Components.GetAppPath();
-            Components.Components.SystemFileCheck();
+            Components.Components.SystemFileCheckAsync();
 
             InitializeComponent();
 
@@ -18,6 +18,8 @@ namespace YouTubeDownDlp
             IsFormTheStartLivedown_checkBox.Visible = false;
             CookieUseBrowser_comboBox.Visible = false;
             CookieUseBrowser_comboBox.SelectedIndex = 0;
+
+            this.Text += " 1.0.0.1";
 
             //Ç‡ÇµèoóÕêÊÇ™ï€ë∂Ç≥ÇÍÇƒÇΩÇÁÇªÇÍÇë„ì¸Ç∑ÇÈ
             if (Properties.Settings.Default.OutputFolderPath.Length != 0)

@@ -8,22 +8,12 @@
         /// <returns>コマンド(Arg)</returns>
         public static string GetArgs(ArgData argdata)
         {
-            string live = null;
-            string cookie = null;
-
             string Cookiebrowsername = argdata.CookieBrowserName;
             string outputpath = argdata.OutputPath;
             string url = argdata.Url;
 
-            if (argdata.IsformStartLive)
-            {
-                live = "--live-from-start";
-            }
-
-            if (argdata.IsCookie)
-            {
-                cookie = $"--cookies-from-browser {Cookiebrowsername}";
-            }
+            string live = argdata.IsformStartLive ? "--live-from-start" : null;
+            string cookie = argdata.IsCookie ? $"--cookies-from-browser {Cookiebrowsername}" : null;
 
             return argdata.mode switch
             {

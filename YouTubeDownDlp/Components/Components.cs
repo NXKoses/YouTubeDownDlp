@@ -1,22 +1,14 @@
-﻿using System;
-using System.Diagnostics;
-using System.DirectoryServices.ActiveDirectory;
-using System.IO;
-using System.Net;
-using System.Security.Cryptography;
-using System.Security.Policy;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 using YouTubeDownDlp.Forms;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace YouTubeDownDlp.Components
 {
     internal class Components
     {
-        static DirectoryInfo systemfolder = new DirectoryInfo(@Global_Variable.AppPath + @"/System/");
-        static DirectoryInfo ffmpeg = new DirectoryInfo(@Global_Variable.AppPath + @"/System/ffmpeg.exe");
-        static DirectoryInfo ffprobe = new DirectoryInfo(@Global_Variable.AppPath + @"/System/ffprobe.exe");
-        static DirectoryInfo ytdlp = new DirectoryInfo(@Global_Variable.AppPath + @"/System/yt-dlp.exe");
+        static readonly DirectoryInfo systemfolder = new(@Global_Variable.AppPath + @"/System/");
+        static readonly DirectoryInfo ffmpeg = new(@Global_Variable.AppPath + @"/System/ffmpeg.exe");
+        static readonly DirectoryInfo ffprobe = new(@Global_Variable.AppPath + @"/System/ffprobe.exe");
+        static readonly DirectoryInfo ytdlp = new(@Global_Variable.AppPath + @"/System/yt-dlp.exe");
         public static string GetAppPath()
         {
             return Application.StartupPath;
@@ -39,59 +31,58 @@ namespace YouTubeDownDlp.Components
                 // レスポンスが成功した場合
                 if (response.IsSuccessStatusCode)
                 {
-                    var fileName = System.IO.Path.GetFileName(downurl);
+                    var fileName = Path.GetFileName(downurl);
                     // レスポンスの内容をストリームとして取得
                     using var stream = await response.Content.ReadAsStreamAsync();
-
                     // ストリームをファイルに書き込む
-                    using var fileStream = File.Create(systemfolder + fileName);
+                    using var fileStream = File.Create(Path.Combine(systemfolder.ToString(), fileName));
                     await stream.CopyToAsync(fileStream);
-                    fileStream.Dispose();
                 }
                 else
                 {
                     await client.DeleteAsync(downurl);
                 }
             }
+            Debug.WriteLine("ダウンロード完了");
         }
 
-        public static async void SystemFileCheckAsync()
+        public static void SystemFileCheck()
         {
             List<string> filePaths = new() { ffmpeg.ToString(), ffprobe.ToString(), ytdlp.ToString() };
-            bool isdown = false;
+            bool system_file_found = filePaths.Any(filePath => !File.Exists(filePath));
 
-            if (!Directory.Exists(systemfolder.ToString())) systemfolder.Create();
-            foreach (string filePath in filePaths)
+            if (!Directory.Exists(systemfolder.ToString()))
             {
-                if (!File.Exists(filePath))
-                {
-                    isdown = true;
-                }
+                Directory.CreateDirectory(systemfolder.ToString());
             }
 
-            if (isdown)
+            if (system_file_found)
             {
                 var upform = new SystemFileDownNotice();
                 upform.Show();
-                Task tas = Task.Run(SystemFileDownload);
-                tas.Wait();
+
+                Task.Run(() => SystemFileDownload()).Wait();
+
                 upform.Close();
+                upform.Dispose();
             }
 
-            //無駄なファイル削除
-            try
+            var filesToDelete = Directory.EnumerateFiles(systemfolder.ToString())
+                .Where(x => !(Path.GetFileName(x) is "ffmpeg.exe" or "ffprobe.exe" or "yt-dlp.exe"));
+
+            foreach (var fileToDelete in filesToDelete)
             {
-                foreach (var path in Directory.EnumerateFiles(Global_Variable.AppPath + "/System/")
-                    .Where(x => !(Path.GetFileName(x) == "ffmpeg.exe" || Path.GetFileName(x) == "ffprobe.exe" || Path.GetFileName(x) == "yt-dlp.exe")))
+                try
                 {
-                    File.Delete(path);
-                    Debug.WriteLine("削除: " + path);
+                    File.Delete(fileToDelete);
+                    Debug.WriteLine("削除: " + fileToDelete);
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine($"ファイル {fileToDelete} を削除できませんでした。: {e.Message}");
                 }
             }
-            catch (Exception e)
-            {
-                Debug.WriteLine(e);
-            }
         }
+
     }
 }

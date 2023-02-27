@@ -8,7 +8,7 @@ namespace YouTubeDownDlp
         public MainForm()
         {
             Global_Variable.AppPath = Components.Components.GetAppPath();
-            Components.Components.SystemFileCheckAsync();
+            Components.Components.SystemFileCheck();
 
             InitializeComponent();
 
@@ -19,7 +19,7 @@ namespace YouTubeDownDlp
             CookieUseBrowser_comboBox.Visible = false;
             CookieUseBrowser_comboBox.SelectedIndex = 0;
 
-            this.Text += " 1.0.0.1";
+            this.Text += " 1.0.0.3";
 
             //もし出力先が保存されてたらそれを代入する
             if (Properties.Settings.Default.OutputFolderPath.Length != 0)
@@ -54,7 +54,7 @@ namespace YouTubeDownDlp
                 CookieBrowserName = CookieUseBrowser_comboBox.Text,
                 IsCookie = IsUseCookie_checkBox.Checked,
                 IsformStartLive = IsFormTheStartLivedown_checkBox.Checked,
-                mode = GetMode(),
+                Mode = GetMode(),
                 OutputPath = Global_Variable.Outputfolderpath,
                 Url = Url_textBox.Text
             };
@@ -125,9 +125,18 @@ namespace YouTubeDownDlp
 
         private void dlpUpdate_toolStripButton_Click(object sender, EventArgs e)
         {
-            using UpdateForm updateform = new();
-            updateform.ShowDialog();
-            updateform.Dispose();
+            if (!Global_Variable.IsConverting)
+            {
+                UpdateForm updateform = new()
+                {
+                    StartPosition = FormStartPosition.Manual,
+                    Location = this.Location
+                };
+                updateform.ShowDialog(this);
+                updateform.Dispose();
+                return;
+            }
+            MessageBox.Show("変換中は実行できません。", "お知らせ", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void outputpathsave_button_Click(object sender, EventArgs e)

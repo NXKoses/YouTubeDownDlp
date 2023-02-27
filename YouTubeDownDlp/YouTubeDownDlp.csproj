@@ -11,6 +11,7 @@
     <SignAssembly>False</SignAssembly>
     <AnalysisLevel>latest-recommended</AnalysisLevel>
     <EnforceCodeStyleInBuild>False</EnforceCodeStyleInBuild>
+	<PublishReadyToRun>true</PublishReadyToRun>
   </PropertyGroup>
 
   <ItemGroup>

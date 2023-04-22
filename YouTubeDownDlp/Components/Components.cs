@@ -61,7 +61,7 @@ namespace YouTubeDownDlp.Components
                 var upform = new SystemFileDownNotice();
                 upform.Show();
 
-                Task.Run(() => SystemFileDownload()).Wait();
+                Task.Run(SystemFileDownload).Wait();
 
                 upform.Close();
                 upform.Dispose();

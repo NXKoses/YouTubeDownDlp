@@ -19,7 +19,7 @@ namespace YouTubeDownDlp
             CookieUseBrowser_comboBox.Visible = false;
             CookieUseBrowser_comboBox.SelectedIndex = 0;
 
-            this.Text += " 1.0.0.3";
+            this.Text += " 1.0.0.5";
 
             //もし出力先が保存されてたらそれを代入する
             if (Properties.Settings.Default.OutputFolderPath.Length != 0)
@@ -115,7 +115,7 @@ namespace YouTubeDownDlp
             OutputFolder_textBox.Text = path;
         }
 
-        private void main_Control_Selecting(object sender, TabControlCancelEventArgs e)
+        private void Main_Control_Selecting(object sender, TabControlCancelEventArgs e)
         {
             if (Global_Variable.IsConverting)
             {
@@ -123,7 +123,7 @@ namespace YouTubeDownDlp
             }
         }
 
-        private void dlpUpdate_toolStripButton_Click(object sender, EventArgs e)
+        private void DlpUpdate_toolStripButton_Click(object sender, EventArgs e)
         {
             if (!Global_Variable.IsConverting)
             {
@@ -139,14 +139,14 @@ namespace YouTubeDownDlp
             MessageBox.Show("変換中は実行できません。", "お知らせ", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        private void outputpathsave_button_Click(object sender, EventArgs e)
+        private void Outputpathsave_button_Click(object sender, EventArgs e)
         {
             Properties.Settings.Default.OutputFolderPath = Global_Variable.Outputfolderpath;
             Properties.Settings.Default.Save();
             MessageBox.Show("保存しました", "お知らせぇ！", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        private void outputpathReset_button_Click(object sender, EventArgs e)
+        private void OutputpathReset_button_Click(object sender, EventArgs e)
         {
             Properties.Settings.Default.Reset();
             MessageBox.Show("リセットしました。次回起動時から適用されます", "お知らせぇ！", MessageBoxButtons.OK, MessageBoxIcon.Information);

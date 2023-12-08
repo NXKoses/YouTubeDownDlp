@@ -95,7 +95,7 @@
             this.dlpUpdate_toolStripButton.Name = "dlpUpdate_toolStripButton";
             this.dlpUpdate_toolStripButton.Size = new System.Drawing.Size(52, 22);
             this.dlpUpdate_toolStripButton.Text = "dlp更新";
-            this.dlpUpdate_toolStripButton.Click += new System.EventHandler(this.dlpUpdate_toolStripButton_Click);
+            this.dlpUpdate_toolStripButton.Click += new System.EventHandler(this.DlpUpdate_toolStripButton_Click);
             // 
             // main_Control
             // 
@@ -106,7 +106,7 @@
             this.main_Control.SelectedIndex = 0;
             this.main_Control.Size = new System.Drawing.Size(641, 314);
             this.main_Control.TabIndex = 3;
-            this.main_Control.Selecting += new System.Windows.Forms.TabControlCancelEventHandler(this.main_Control_Selecting);
+            this.main_Control.Selecting += new System.Windows.Forms.TabControlCancelEventHandler(this.Main_Control_Selecting);
             // 
             // MainPage
             // 
@@ -208,7 +208,7 @@
             this.outputpathReset_button.TabIndex = 7;
             this.outputpathReset_button.Text = "リセット";
             this.outputpathReset_button.UseVisualStyleBackColor = true;
-            this.outputpathReset_button.Click += new System.EventHandler(this.outputpathReset_button_Click);
+            this.outputpathReset_button.Click += new System.EventHandler(this.OutputpathReset_button_Click);
             // 
             // outputpathsave_button
             // 
@@ -218,7 +218,7 @@
             this.outputpathsave_button.TabIndex = 6;
             this.outputpathsave_button.Text = "保存";
             this.outputpathsave_button.UseVisualStyleBackColor = true;
-            this.outputpathsave_button.Click += new System.EventHandler(this.outputpathsave_button_Click);
+            this.outputpathsave_button.Click += new System.EventHandler(this.Outputpathsave_button_Click);
             // 
             // ext_groupBox
             // 

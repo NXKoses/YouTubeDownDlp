@@ -22,7 +22,7 @@ namespace YouTubeDownDlp.Components
             {
                 "http://kosenyax.starfree.jp/YouTubeDownComponent/ffmpeg.exe",
                 "http://kosenyax.starfree.jp/YouTubeDownComponent/ffprobe.exe",
-                "http://kosenyax.starfree.jp/YouTubeDownComponent/yt-dlp.exe"
+                "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe"
             };
 
             foreach (var downurl in downlist)
@@ -49,18 +49,23 @@ namespace YouTubeDownDlp.Components
         public static void SystemFileCheck()
         {
             List<string> filePaths = new() { ffmpeg.ToString(), ffprobe.ToString(), ytdlp.ToString() };
-            bool system_file_found = filePaths.Any(filePath => !File.Exists(filePath));
+            bool system_file_notfound = filePaths.Any(filePath => !File.Exists(filePath));
 
             if (!Directory.Exists(systemfolder.ToString()))
             {
                 Directory.CreateDirectory(systemfolder.ToString());
             }
 
-            if (system_file_found)
+            if (system_file_notfound)
             {
+                var ans = MessageBox.Show("システムファイルをダウンロードします。よろしいですか？", "YoutubeDownDlp", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+                if (ans == DialogResult.No)
+                {
+                    MessageBox.Show("変換などの処理が実行できません。手動でファイルを配置するか、再起動してください。", "YoutubeDownDlp");
+                    return;
+                }
                 var upform = new SystemFileDownNotice();
                 upform.Show();
-
                 Task.Run(SystemFileDownload).Wait();
 
                 upform.Close();

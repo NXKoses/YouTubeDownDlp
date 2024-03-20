@@ -59,35 +59,5 @@ namespace YouTubeDownDlp.Properties {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   型 System.Byte[] のローカライズされたリソースを検索します。
-        /// </summary>
-        internal static byte[] ffmpeg {
-            get {
-                object obj = ResourceManager.GetObject("ffmpeg", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   型 System.Byte[] のローカライズされたリソースを検索します。
-        /// </summary>
-        internal static byte[] ffprobe {
-            get {
-                object obj = ResourceManager.GetObject("ffprobe", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   型 System.Byte[] のローカライズされたリソースを検索します。
-        /// </summary>
-        internal static byte[] yt_dlp {
-            get {
-                object obj = ResourceManager.GetObject("yt-dlp", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
     }
 }

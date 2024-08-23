@@ -7,11 +7,7 @@ namespace YouTubeDownDlp
     {
         public MainForm()
         {
-            Global_Variable.AppPath = Components.Components.GetAppPath();
-            Components.Components.SystemFileCheck();
-
             InitializeComponent();
-
 
             Url_textBox.Select();
             Log_richTextBox.HideSelection = false;

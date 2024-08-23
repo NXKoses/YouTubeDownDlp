@@ -9,6 +9,7 @@ namespace YouTubeDownDlp.Components
         static readonly DirectoryInfo ffmpeg = new(@Global_Variable.AppPath + @"/System/ffmpeg.exe");
         static readonly DirectoryInfo ffprobe = new(@Global_Variable.AppPath + @"/System/ffprobe.exe");
         static readonly DirectoryInfo ytdlp = new(@Global_Variable.AppPath + @"/System/yt-dlp.exe");
+
         public static string GetAppPath()
         {
             return Application.StartupPath;
@@ -48,7 +49,7 @@ namespace YouTubeDownDlp.Components
 
         public static void SystemFileCheck()
         {
-            List<string> filePaths = new() { ffmpeg.ToString(), ffprobe.ToString(), ytdlp.ToString() };
+            List<string> filePaths = [ffmpeg.ToString(), ffprobe.ToString(), ytdlp.ToString()];
             bool system_file_notfound = filePaths.Any(filePath => !File.Exists(filePath));
 
             if (!Directory.Exists(systemfolder.ToString()))

@@ -9,6 +9,11 @@ namespace YouTubeDownDlp
         [STAThread]
         static void Main()
         {
+            // このアプリの実行フォルダを取得し設定しておく
+            Global_Variable.AppPath = Components.Components.GetAppPath();
+            // 必要なファイルがあるか確認するなかったらダウンロードする
+            Components.Components.SystemFileCheck();
+
             //二重起動をチェックする
             if (System.Diagnostics.Process.GetProcessesByName(
                 System.Diagnostics.Process.GetCurrentProcess().ProcessName).Length > 1)

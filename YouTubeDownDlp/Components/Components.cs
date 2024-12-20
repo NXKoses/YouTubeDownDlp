@@ -21,8 +21,8 @@ namespace YouTubeDownDlp.Components
             using HttpClient client = new();
             List<string> downlist = new()
             {
-                "http://kosenyax.starfree.jp/YouTubeDownComponent/ffmpeg.exe",
-                "http://kosenyax.starfree.jp/YouTubeDownComponent/ffprobe.exe",
+                "http://kosenyaxs.stars.ne.jp/YouTubeDownComponent/ffmpeg.exe",
+                "http://kosenyaxs.stars.ne.jp/YouTubeDownComponent/ffprobe.exe",
                 "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe"
             };
 

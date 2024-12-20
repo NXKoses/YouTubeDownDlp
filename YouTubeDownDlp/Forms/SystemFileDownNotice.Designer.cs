@@ -46,7 +46,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(279, 66);
             Controls.Add(label1);
-            FormBorderStyle = FormBorderStyle.None;
+            FormBorderStyle = FormBorderStyle.FixedSingle;
             Name = "SystemFileDownNotice";
             Text = "SystemFileDownNotice";
             ResumeLayout(false);

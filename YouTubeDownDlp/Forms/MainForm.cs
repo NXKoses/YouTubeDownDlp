@@ -15,7 +15,7 @@ namespace YouTubeDownDlp
             CookieUseBrowser_comboBox.Visible = false;
             CookieUseBrowser_comboBox.SelectedIndex = 0;
 
-            this.Text += " 1.0.0.7";
+            this.Text += " 1.0.0.8";
 
             //‚à‚µo—Íæ‚ª•Û‘¶‚³‚ê‚Ä‚½‚ç‚»‚ê‚ğ‘ã“ü‚·‚é
             if (Properties.Settings.Default.OutputFolderPath.Length != 0)

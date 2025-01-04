@@ -48,6 +48,7 @@
             Controls.Add(label1);
             FormBorderStyle = FormBorderStyle.FixedSingle;
             Name = "SystemFileDownNotice";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "SystemFileDownNotice";
             ResumeLayout(false);
             PerformLayout();

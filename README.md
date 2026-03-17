@@ -9,4 +9,4 @@
 ・[ffprobe.exe](https://www.ffmpeg.org/)  
 
 ## ライセンス
-・アプリケーション更新処理にはVeloPackを使用しています。VeloPackはMIT Licenseで配布されています。
+・アプリケーション更新処理には[VeloPack](https://github.com/velopack/velopack/)を使用しています。VeloPackは[MIT License](https://github.com/velopack/velopack/blob/develop/LICENSE)で配布されています。

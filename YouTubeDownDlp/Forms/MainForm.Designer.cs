@@ -291,6 +291,7 @@
             MaximizeBox = false;
             Name = "MainForm";
             Text = "ようつゔぇDowndlp";
+            Load += MainForm_LoadAsync;
             toolStrip1.ResumeLayout(false);
             toolStrip1.PerformLayout();
             main_Control.ResumeLayout(false);

@@ -5,7 +5,7 @@ namespace PictureReSize
 {
     internal class UpdateProcess
     {
-        private const string GITHUB_URL = "https://github.com/NXKoses/PictureReSize/";
+        private const string GITHUB_URL = "https://github.com/NXKoses/YouTubeDownDlp/";
 
         public static async Task CheckForUpdateAsync(Form form)
         {

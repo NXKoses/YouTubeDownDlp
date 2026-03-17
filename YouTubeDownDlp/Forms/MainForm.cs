@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using PictureReSize;
+using System.Diagnostics;
 using YouTubeDownDlp.Components;
 using YouTubeDownDlp.Setting;
 
@@ -28,6 +29,12 @@ namespace YouTubeDownDlp
                 Global_Variable.Outputfolderpath = appSetting.OutputFolderPath;
                 OutputFolder_textBox.Text = appSetting.OutputFolderPath;
             }
+        }
+
+        private async void MainForm_LoadAsync(object sender, EventArgs e)
+        {
+            // 更新を確認する
+            await UpdateProcess.CheckForUpdateAsync(this);
         }
 
         /// <summary>
@@ -164,5 +171,7 @@ namespace YouTubeDownDlp
         {
             Process.Start("EXPLORER.EXE", Global_Variable.AppPath);
         }
+
+
     }
 }
